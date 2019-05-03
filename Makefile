@@ -8,7 +8,7 @@ RGDcore: RGDcore/RGDcore.php
 	$(PHP) $^ > $@.dot
 	$(DOT) $(DOTFLAGS) -o $@.$(FORMAT) $@.dot
 
-.PHONY: clean
+.PHONY: RGDcore/RGDcore.php clean
 
 clean:
 	rm *.dot
