@@ -118,7 +118,7 @@
 				}
 			}
 			foreach ($this->service_subs as $service_sub) {
-				if($service_sub["element"]->progres_state != ProgresState::not_used || !$GLOBALS["display_non_used"]){
+				if($service_sub["element"]->progres_state != ProgresState::not_used || $GLOBALS["display_non_used"]){
 					$service_sub["element"]->render();
 					if(!$service_sub["rendered_link"])
 					{
@@ -129,7 +129,7 @@
 				}
 			}
 			foreach ($this->service_pubs as $service_pub) {
-				if($service_pub["element"]->progres_state != ProgresState::not_used || !$GLOBALS["display_non_used"]){
+				if($service_pub["element"]->progres_state != ProgresState::not_used || $GLOBALS["display_non_used"]){
 					$service_pub["element"]->render();
 					if(!$service_pub["rendered_link"])
 					{
