@@ -79,6 +79,28 @@
 			}
 			return $this;
 		}
+		public function action($action_name, $action_struct , $progres_state = ProgresState::to_do)
+		{
+			$result   = new Topic($this->var_name."_result",   $action_name."/result",   $action_name."/".$action_struct."ActionResult",   $progres_state);
+			$goal     = new Topic($this->var_name."_goal",     $action_name."/goal",     $action_name."/".$action_struct."ActionGoal",     $progres_state);
+			$cancel   = new Topic($this->var_name."_cancel",   $action_name."/cancel",   "actionlib_msgs/GoalID",                  $progres_state);
+			$status   = new Topic($this->var_name."_status",   $action_name."/status",   "actionlib_msgs/GoalStatusArray",         $progres_state);
+			$feedback = new Topic($this->var_name."_feedback", $action_name."/feedback", $action_name."/".$action_struct."ActionFeedback", $progres_state);
+			$this
+				->advertise($result)
+				->advertise($status)
+				->advertise($feedback)
+				->subscribe($goal)
+				->subscribe($cancel)
+			;
+			return [
+				"result" => $result,
+				"goal" => $goal,
+				"cancel" => $cancel,
+				"status" => $status,
+				"feedback" => $feedback,
+			];
+		}
 		function render_element_label($element, array $extra_options = [])
 		{
 			if(isset($element["note"]))
