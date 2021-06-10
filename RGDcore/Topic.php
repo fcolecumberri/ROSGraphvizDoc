@@ -27,8 +27,7 @@ class Topic extends MultiLayerRenderable{
         return
             ($this->name == $name) and
             ($this->struct == $struct) and
-            ($this->pkg == $pkg) and
-            ($this->renamed_from == $renamed_from);
+            ($this->pkg == $pkg);
     }
 
     public function params(){

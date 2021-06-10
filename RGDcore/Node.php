@@ -68,26 +68,26 @@ class Node extends Renderable{
         return $this;
     }
 
-    public function advertise_service(Service &$service){
-        $this->connect($service, 'advertise_service');
+    public function advertise_service(...$params){
+        $this->connect(RGD::service(...$params), 'advertise_service');
         $service->have_pubs = true;
         return $this;
     }
 
-    public function consume_service(Service &$service){
-        $this->connect($service, 'consume_service');
+    public function consume_service(...$params){
+        $this->connect(RGD::service(...$params), 'consume_service');
         $service->have_subs = true;
         return $this;
     }
 
-    public function publish_topic(Topic &$topic){
-        $this->connect($topic, 'publish_topic');
+    public function publish_topic(...$params){
+        $this->connect(RGD::topic(...$params), 'publish_topic');
         $topic->have_pubs = true;
         return $this;
     }
 
-    public function subscribe_topic(Topic &$topic){
-        $this->connect($topic, 'subscribe_topic');
+    public function subscribe_topic(...$params){
+        $this->connect(RGD::topic(...$params), 'subscribe_topic');
         $topic->have_subs = true;
         return $this;
     }
