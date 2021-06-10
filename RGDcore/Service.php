@@ -1,19 +1,33 @@
 <?php
-	/**
-	 * 
-	 */
-	class Service extends MultiLayerRenderable
-	{
-		public $progres_state;
-		function __construct(string $var_name, string $service_full_name, string $service_srv, $_progres_state = ProgresState::to_do)
-		{
-			parent::__construct($var_name, $service_full_name, [$service_srv]);
-			$progres_state = $_progres_state;
-			$this->extra_configs["shape"]="Mrecord";
-			$this->extra_configs["style"]="filled";
-			$this->extra_configs["color"]="black";
-			$this->extra_configs["fillcolor"]=state_to_color($_progres_state);
-		}
-	}
-	
-?>
+
+include_once(dirname(__FILE__)."/InfoChannel.php");
+
+class Service extends MultiLayerRenderable{
+    use InfoChannel;
+    public function __construct(
+        public string $name,
+        public string $struct,
+        public string $renamed_from = ''
+    ){
+        parrent::__construct('service_'.$this->name,
+            [$this->name, $this->struct],
+            [
+                'shape' => 'Mrecord',
+                'style' => 'filled',
+                'color' => 'black',
+                'fillcolor' => 'magenta',
+            ]
+        );
+    }
+
+    public function is_same($name, $struct, $renamed_from){
+        return
+            $this->name == $name and
+            $this->struct == $struct and
+            ($this->renamed_from == $renamed_from);
+    }
+
+    public function params(){
+        return "[name = '$name', struct = '$struct', renamed_from = '$this->renamed_from']";
+    }
+}

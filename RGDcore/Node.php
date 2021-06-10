@@ -1,193 +1,114 @@
 <?php
-	/**
-	 * 
-	 */
-	class Node extends Renderable
-	{
-		private $topic_subs = [];
-		private $topic_pubs = [];
-		private $service_subs = [];
-		private $service_pubs = [];
-		// private $action_subs = [];
-		// private $action_pubs = [];
-		private $extern_subs = [];
-		private $extern_pubs = [];
-		function __construct($var_name, $node_full_name, $_progres_state = ProgresState::to_do)
-		{
-			parent::__construct($var_name, $node_full_name);
-			$this->extra_configs["style"]="filled";
-			$this->extra_configs["shape"]="ellipse";
-			$this->extra_configs["color"]="black";
-			$this->extra_configs["fillcolor"]=state_to_color($_progres_state);
-			array_push($GLOBALS["node_list"], $this);
-		}
-		public function subscribe($element, $note = NULL)
-		{
-			$entry = [
-				"element" => $element,
-				"note" => $note,
-				"rendered_link" => false,
-			];
-			if($element instanceof Topic)
-			{
-				array_push($this->topic_subs, $entry);
-			}else if($element instanceof Service)
-			{
-				array_push($this->service_subs, $entry);
-			}else if($element instanceof External)
-			{
-				array_push($this->extern_subs, $entry);
-			}else
-			{
-				fwrite(STDERR,
-					"Error: Nodes can only subscribe to ".
-					"Topic ".
-					"Service ".
-					"or ".
-					"Extern elements".
-					"\n"
-				);
-			}
-			return $this;
-		}
-		public function advertise($element, $note = NULL)
-		{
-			$entry = [
-				"element" => $element,
-				"note" => $note,
-				"rendered_link" => false,
-			];
-			if($element instanceof Topic)
-			{
-				array_push($this->topic_pubs, $entry);
-			}else if($element instanceof Service)
-			{
-				array_push($this->service_pubs, $entry);
-			}else if($element instanceof External)
-			{
-				array_push($this->extern_pubs, $entry);
-			}else
-			{
-				fwrite(STDERR,
-					"Error: Nodes can only advertise to ".
-					"Topic ".
-					"Service ".
-					"or ".
-					"External elements".
-					"\n"
-				);
-			}
-			return $this;
-		}
-		public function action($action_name, $action_struct , $progres_state = ProgresState::to_do)
-		{
-			$result   = new Topic($this->var_name."_result",   $action_name."/result",   $action_name."/".$action_struct."ActionResult",   $progres_state);
-			$goal     = new Topic($this->var_name."_goal",     $action_name."/goal",     $action_name."/".$action_struct."ActionGoal",     $progres_state);
-			$cancel   = new Topic($this->var_name."_cancel",   $action_name."/cancel",   "actionlib_msgs/GoalID",                  $progres_state);
-			$status   = new Topic($this->var_name."_status",   $action_name."/status",   "actionlib_msgs/GoalStatusArray",         $progres_state);
-			$feedback = new Topic($this->var_name."_feedback", $action_name."/feedback", $action_name."/".$action_struct."ActionFeedback", $progres_state);
-			$this
-				->advertise($result)
-				->advertise($status)
-				->advertise($feedback)
-				->subscribe($goal)
-				->subscribe($cancel)
-			;
-			return [
-				"result" => $result,
-				"goal" => $goal,
-				"cancel" => $cancel,
-				"status" => $status,
-				"feedback" => $feedback,
-			];
-		}
-		function render_element_label($element, array $extra_options = [])
-		{
-			if(isset($element["note"]))
-			{
-				echo " [label=\"".$element["note"]."\"";
-			}else
-			{
-				echo " [label=\"\"";
-			}
-			foreach ($extra_options as $option_key => $option_value) {
-				echo ", ".$option_key."=\"".$option_value."\"";
-			}
-			echo "];\n";
-		}
-		function render_elements()
-		{
-			foreach ($this->topic_subs as $topic_sub) {
-				if($topic_sub["element"]->progres_state != ProgresState::not_used || $GLOBALS["display_non_used"]){
-					$topic_sub["element"]->render();
-					if(!$topic_sub["rendered_link"])
-					{
-						echo $topic_sub["element"]->var_name ." -> ".$this->var_name;
-						$this->render_element_label($topic_sub);
-						$topic_sub["rendered_link"] = true;
-					}
-				}
-			}
-			foreach ($this->topic_pubs as $topic_pub) {
-				if($topic_pub["element"]->progres_state != ProgresState::not_used || $GLOBALS["display_non_used"]){
-					$topic_pub["element"]->render();
-					if(!$topic_pub["rendered_link"])
-					{
-						echo $this->var_name." -> ".$topic_pub["element"]->var_name;
-						$this->render_element_label($topic_pub);
-						$topic_pub["rendered_link"] = true;
-					}
-				}
-			}
-			foreach ($this->service_subs as $service_sub) {
-				if($service_sub["element"]->progres_state != ProgresState::not_used || !$GLOBALS["display_non_used"]){
-					$service_sub["element"]->render();
-					if(!$service_sub["rendered_link"])
-					{
-						echo $service_sub["element"]->var_name." -> ".$this->var_name;
-						$this->render_element_label($service_sub, ["dir"=>"both"]);
-						$service_sub["rendered_link"] = true;
-					}
-				}
-			}
-			foreach ($this->service_pubs as $service_pub) {
-				if($service_pub["element"]->progres_state != ProgresState::not_used || !$GLOBALS["display_non_used"]){
-					$service_pub["element"]->render();
-					if(!$service_pub["rendered_link"])
-					{
-						echo $service_pub["element"]->var_name." -> ".$this->var_name;
-						$this->render_element_label($service_pub, ["dir"=>"none", "style"=>"dotted"]);
-						$service_pub["rendered_link"] = true;
-					}
-				}
-			}
-			foreach ($this->extern_subs as $extern_sub) {
-				$extern_sub["element"]->render();
-				if(!$extern_sub["rendered_link"])
-				{
-					echo $extern_sub["element"]->var_name." -> ".$this->var_name;
-					$this->render_element_label($extern_sub, ["dir"=>"both"]);
-					$extern_sub["rendered_link"] = true;
-				}
-			}
-			foreach ($this->extern_pubs as $extern_pub) {
-				$extern_pub["element"]->render();
-				if(!$extern_pub["rendered_link"])
-				{
-					echo $this->var_name." -> ".$extern_pub["element"]->var_name;
-					$this->render_element_label($extern_pub, ["dir"=>"both"]);
-					$extern_pub["rendered_link"] = true;
-				}
-			}
-		}
-		public function add_suffix(string $suffix)
-		{
-			$this->label .= $suffix;
-		}
-		public function add_prefix(string $prefix)
-		{
-			$this->label = $prefix.$this->label;
-		}
-	}
-	
-?>
+
+include_once(dirname(__FILE__)."/Renderable.php");
+include_once(dirname(__FILE__)."/ProgresState.php");
+include_once(dirname(__FILE__)."/RGD.php");
+
+class Node extends Renderable{
+    private $connections = [];
+    public function __construct(
+        string $pkg,
+        public string $name,
+        $url = Null,
+        public string $progres_state = ProgresState::to_do
+    ){
+        parent::__construct(
+            "node_".$name,
+            "$pkg::$name".
+            ($url ? "\n$url" : ''),
+            [
+                'style' => 'filled',
+                'shape' => 'ellipse',
+                'color' => 'black',
+                'fillcolor' => state_to_color($this->progres_state),
+            ]
+        );
+    }
+
+    public function render(){
+        $r = parent::render();
+        foreach ($this->connections as $conection_name => &$conection_value) {
+            if(!$conection_value['node']->is_leaf()) {
+                $r .= $conection_value['node']->render();
+                if($conection_value['type'] == 'advertise_service') {
+                    $r .= $conection_value['node']->var_name." -> ".$this->var_name;
+                    $r .= ' ['.$this->render_options([
+                        'label' => $conection_value['node']->connection_label(),
+                        "dir"=>"both",
+                    ]).']';
+                } elseif($conection_value['type'] == 'consume_service') {
+                    $r .= $conection_value['node']->var_name." -> ".$this->var_name;
+                    $r .= ' ['.$this->render_options([
+                        'label' => $conection_value['node']->connection_label(),
+                        "dir"=>"none",
+                        "style"=>"dotted",
+                    ]);']';
+                } elseif($conection_value['type'] == 'publish_topic') {
+                    $r .= $this->var_name." -> ".$conection_value['node']->var_name;
+                    $this->render_options([
+                        'label' => $conection_value['node']->connection_label(),
+                    ]);
+                } elseif($conection_value['type'] == 'subscribe_topic') {
+                    $r .= $conection_value['node']->var_name." -> ".$this->var_name;
+                    $this->render_options([
+                        'label' => $conection_value['node']->connection_label(),
+                    ]);
+                }
+                $r .= ";\n";
+            }
+        }
+        return $r;
+    }
+
+    private function connect(Service|Topic &$conection, $type){
+        $this->connections[$conection->name] = [
+            'type' => $type,
+            'node' => $conection,
+        ];
+        return $this;
+    }
+
+    public function advertise_service(Service &$service){
+        $this->connect($service, 'advertise_service');
+        $service->have_pubs = true;
+        return $this;
+    }
+
+    public function consume_service(Service &$service){
+        $this->connect($service, 'consume_service');
+        $service->have_subs = true;
+        return $this;
+    }
+
+    public function publish_topic(Topic &$topic){
+        $this->connect($topic, 'publish_topic');
+        $topic->have_pubs = true;
+        return $this;
+    }
+
+    public function subscribe_topic(Topic &$topic){
+        $this->connect($topic, 'subscribe_topic');
+        $topic->have_subs = true;
+        return $this;
+    }
+
+    public function advertise_action(...$params){
+        $topics = RGD::action(...$params);
+        $this->publish_topic($topics['result']);
+        $this->publish_topic($topics['status']);
+        $this->publish_topic($topics['feedback']);
+        $this->subscribe_topic($topics['goal']);
+        $this->subscribe_topic($topics['cancel']);
+        return $this;
+    }
+
+    public function consume_action(...$params){
+        $topics = RGD::action(...$params);
+        $this->subscribe_topic($topics['result']);
+        $this->subscribe_topic($topics['status']);
+        $this->subscribe_topic($topics['feedback']);
+        $this->publish_topic($topics['goal']);
+        $this->publish_topic($topics['cancel']);
+        return $this;
+    }
+}

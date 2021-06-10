@@ -1,33 +1,33 @@
-<?php 
-	/**
-	 * 
-	 */
-	class Renderable
-	{
-		public $var_name;
-		public $label;
-		protected $extra_configs = [];
-		protected $rendered;
-		function __construct(string $_var_name, string $_label)
-		{
-			$this->var_name = $_var_name;
-			$this->label = $_label;
-			$this->rendered = false;
-		}
-		public function render()
-		{
-			if(!$this->rendered)
-			{
-				echo "$this->var_name [";
-				foreach ($this->extra_configs as $extra_config_key => $extra_config_value) {
-					echo "$extra_config_key=\"$extra_config_value\",";
-				}
-				echo "label=\"$this->label\"];\n";
-				$this->rendered = true;
-				return true;
-			}
-			return false;
-		}
-	}
-
-?>
+<?php
+/**
+ *
+ */
+class Renderable
+{
+    protected $rendered = false;
+    public string $var_name;
+    function __construct(
+        string $var_name,
+        string $label,
+        protected $extra_configs = [])
+    {
+        $this->var_name = str_replace('/', '_', $var_name);
+        $this->extra_configs['label'] = $label;
+    }
+    public function render()
+    {
+        if($this->rendered) return '';
+        $this->rendered = true;
+        return
+            "$this->var_name [".
+            $this->render_options($this->extra_configs).
+            "];\n";
+    }
+    public function render_options($options){
+        $r_array = [];
+        foreach ($options as $options_key => $options_value) {
+            array_push($r_array, "$options_key=\"$options_value\"");
+        }
+        return implode(',', $r_array);
+    }
+}
