@@ -4,6 +4,23 @@ include_once(dirname(__FILE__)."/Renderable.php");
 include_once(dirname(__FILE__)."/ProgresState.php");
 include_once(dirname(__FILE__)."/RGD.php");
 
+/*
+__construct(
+    $pkg,
+    $name,
+    $url = Null,
+    $progres_state = ProgresState::to_do
+)
+advertise_service()
+consume_service()
+publish_topic()
+subscribe_topic()
+advertise_action()
+consume_action()
+send_to_external()
+recieve_from_external()
+ */
+
 class Node extends Renderable{
     private $connections = [];
     public function __construct(
@@ -28,7 +45,7 @@ class Node extends Renderable{
     public function render(){
         $r = parent::render();
         foreach ($this->connections as $conection_name => &$conection_value) {
-            if(!$conection_value['node']->is_leaf()) {
+            if(!$conection_value['node']->is_leaf() or RGD::$render_leaves) {
                 $r .= $conection_value['node']->render();
                 if($conection_value['type'] == 'advertise_service') {
                     $r .= $conection_value['node']->var_name." -> ".$this->var_name;
@@ -53,6 +70,18 @@ class Node extends Renderable{
                     $this->render_options([
                         'label' => $conection_value['node']->connection_label(),
                     ]);
+                }elseif($conection_value['type'] == 'send_external') {
+                    $r .= $this->var_name." -> ".$conection_value['node']->var_name;
+                    $this->render_options([
+                        'label' => $conection_value['node']->connection_label(),
+                        "dir"=>"both",
+                    ]);
+                }elseif($conection_value['type'] == 'recieve_external') {
+                    $r .= $conection_value['node']->var_name." -> ".$this->var_name;
+                    $this->render_options([
+                        'label' => $conection_value['node']->connection_label(),
+                        "dir"=>"both",
+                    ]);
                 }
                 $r .= ";\n";
             }
@@ -60,55 +89,68 @@ class Node extends Renderable{
         return $r;
     }
 
-    private function connect(Service|Topic &$conection, $type){
+    private function connect(Service|Topic|External|NULL &$conection, $type){
+        if($conection == NULL) return $this;
         $this->connections[$conection->name] = [
             'type' => $type,
             'node' => $conection,
         ];
+        $set_flag = match($type){
+            'advertise_service', 'publish_topic' => 'have_pubs',
+            'consume_service', 'subscribe_topic' => 'have_subs',
+            default => null,
+        };
+        if($set_flag) $conection->{$set_flag} = true;
         return $this;
     }
 
     public function advertise_service(...$params){
         $this->connect(RGD::service(...$params), 'advertise_service');
-        $service->have_pubs = true;
         return $this;
     }
 
     public function consume_service(...$params){
         $this->connect(RGD::service(...$params), 'consume_service');
-        $service->have_subs = true;
         return $this;
     }
 
     public function publish_topic(...$params){
         $this->connect(RGD::topic(...$params), 'publish_topic');
-        $topic->have_pubs = true;
         return $this;
     }
 
     public function subscribe_topic(...$params){
         $this->connect(RGD::topic(...$params), 'subscribe_topic');
-        $topic->have_subs = true;
         return $this;
     }
 
     public function advertise_action(...$params){
         $topics = RGD::action(...$params);
-        $this->publish_topic($topics['result']);
-        $this->publish_topic($topics['status']);
-        $this->publish_topic($topics['feedback']);
-        $this->subscribe_topic($topics['goal']);
-        $this->subscribe_topic($topics['cancel']);
+        $this->connect($topics['result'], 'publish_topic');
+        $this->connect($topics['status'], 'publish_topic');
+        $this->connect($topics['feedback'], 'publish_topic');
+        $this->connect($topics['goal'], 'subscribe_topic');
+        $this->connect($topics['cancel'], 'subscribe_topic');
         return $this;
     }
 
     public function consume_action(...$params){
         $topics = RGD::action(...$params);
-        $this->subscribe_topic($topics['result']);
-        $this->subscribe_topic($topics['status']);
-        $this->subscribe_topic($topics['feedback']);
-        $this->publish_topic($topics['goal']);
-        $this->publish_topic($topics['cancel']);
+        $this->connect($topics['result'], 'subscribe_topic');
+        $this->connect($topics['status'], 'subscribe_topic');
+        $this->connect($topics['feedback'], 'subscribe_topic');
+        $this->connect($topics['goal'], 'publish_topic');
+        $this->connect($topics['cancel'], 'publish_topic');
+        return $this;
+    }
+
+    public function send_to_external(...$params){
+        $this->connect(RGD::External(...$params), 'send_external');
+        return $this;
+    }
+
+    public function recieve_from_external(...$params){
+        $this->connect(RGD::External(...$params), 'recieve_external');
         return $this;
     }
 }

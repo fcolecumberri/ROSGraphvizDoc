@@ -3,12 +3,18 @@
 include_once(dirname(__FILE__)."/Node.php");
 include_once(dirname(__FILE__)."/Topic.php");
 include_once(dirname(__FILE__)."/Service.php");
+include_once(dirname(__FILE__)."/External.php");
 
 class RGD{
     static public $nodes = [];
     static public $topics = [];
     static public $services = [];
     static public $external = [];
+    static public bool $use_labels = False;
+    static public bool $render_leaves = False;
+    static public ?int $dpi = Null;
+    static public ?string $title = Null;
+    static public ?string $title_poss = Null;
 
     static public function &node(...$params){
         $node = new Node(...$params);
@@ -21,16 +27,22 @@ class RGD{
         return self::$nodes[$name];
     }
 
+    static public function PNG($out_filename){
+        $dot = self::render();
+        //
+    }
+
     static public function render(){
         $body = '';
         $dpi = $GLOBALS["dpi"] ?? 96;
+        $labels = $this->use_labels ? $this->render_labels() : '';
         $title =
-            isset($GLOBALS["title"]) ?
+            isset($this->title) ?
             (
                 "label=\"".
-                $GLOBALS['title'].
+                $this->title.
                 "\" labelloc=\"".
-                ($GLOBALS["title_pos"] ?? 't').
+                ($this->title_pos ?? 't').
                 "\"\n"
             ) :
             '';
@@ -42,6 +54,7 @@ digraph G {
 graph [dpi=$dpi, newrank=true, rankdir="TB"];
 graphranksep=0.5;
 $title
+$labels
 $body
 }
 
@@ -49,9 +62,14 @@ FILE;
         return $file;
     }
 
+    static public function import($file){
+        return include_once(dirname(__FILE__).'/../'.$file);
+    }
+
     static private function &channel(&$array, $class, ...$params){
         $instance = new $class(...$params);
         $name = $instance->name;
+        if(empty($name)) return NULL;
         if(!array_key_exists($name, $array)) {
             $array[$name] = $instance;
             return $array[$name];
@@ -78,13 +96,13 @@ FILE;
         return self::channel(self::$external, External::class, ...$params);
     }
 
-    static public function action($name, $struct){
+    static public function action($name, $pkg, $struct){
         return [
-            'result'   => self::topic($name."/result"  , "$name/$struct"."ActionResult"),
-            'goal'     => self::topic($name."/goal"    , "$name/$struct"."ActionGoal"),
-            'cancel'   => self::topic($name."/cancel"  , "actionlib_msgs/GoalID"),
-            'status'   => self::topic($name."/status"  , "actionlib_msgs/GoalStatusArray"),
-            'feedback' => self::topic($name."/feedback", "$name/$struct"."ActionFeedback"),
+            'result'   => self::topic($name."/result"  , $pkg, "$name/$struct"."ActionResult"),
+            'goal'     => self::topic($name."/goal"    , $pkg, "$name/$struct"."ActionGoal"),
+            'cancel'   => self::topic($name."/cancel"  , $pkg, "actionlib_msgs/GoalID"),
+            'status'   => self::topic($name."/status"  , $pkg, "actionlib_msgs/GoalStatusArray"),
+            'feedback' => self::topic($name."/feedback", $pkg, "$name/$struct"."ActionFeedback"),
         ];
     }
 
