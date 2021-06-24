@@ -121,4 +121,4 @@ RGD::node('{package_name}', '{node_name}')
         output_file_content += f"\t->consume_action('{action_name}', '{action_pkg}', '{action_msg}')\n"
     ##################################################################################################
     output_file_content += ';'
-    open(f"{output_dir}/{package_name}/nodes/{node_name}", 'w').write(output_file_content)
+    open(f"{output_dir}/{package_name}/nodes/{node_name}.php", 'w').write(output_file_content)

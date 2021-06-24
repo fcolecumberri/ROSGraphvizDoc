@@ -11,7 +11,7 @@ if __name__ == '__main__':
     tmp_dir = '/tmp/ros_RGD'
     safe_mkdir(tmp_dir)
     repos = list(dict.fromkeys(scan_ros_local_repos()))
-    print(f"{repos=}")
+    # print(f"{repos=}")
     clone_and_generate(repos, out_dir, tmp_dir)
 
 # from python_src.generate_doc_from_cxx import generate_doc_from_cxx
