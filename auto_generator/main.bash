@@ -16,11 +16,6 @@ done
 # 	https://github.com/ROBOTIS-GIT/turtlebot3_simulations
 # )
 
-function pause(){
-	read -s -n 1 -p "Press any key to continue . . ."
-	echo ""
-}
-
 REPOS=$(printf "%s\n" "${REPOS[@]}" | sort | uniq)
 
 mkdir -p /tmp/ros_RGD

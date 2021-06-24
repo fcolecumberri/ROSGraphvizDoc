@@ -28,7 +28,9 @@ def dual_declaration_abstraction(file_content, type_indicator, declaration_funct
     # print(f"{callback_regex=}")
     for callback_declaration in re.findall(callback_regex, file_content):
         try:
-            pkg = find_between('(const )|(\( *)', callback_declaration, '::').strip()  # NOQA: W605
+            pkg = find_between('\(', callback_declaration, '::').strip()  # NOQA: W605
+            if 'const' in pkg:
+                pkg = pkg.replace('const', '').strip()
             msg = find_between('::', callback_declaration, type_indicator).strip()  # NOQA: W605
             callback_function = find_between(' ', callback_declaration, '\(').strip()  # NOQA: W605
             print(f"{callback_declaration=}")
@@ -73,7 +75,7 @@ def generate_doc_from_cxx(filename, output_dir, package_name):
         # print(f"{node_name=}")
         return
     safe_mkdir(f"{output_dir}/{package_name}/nodes")
-    print(f"{filename=}")
+    # print(f"{filename=}")
     output_file_content = f'''<?php
 // file: {filename}
 include_once(dirname(__FILE__)."/../../RGDcore/RGD.php");

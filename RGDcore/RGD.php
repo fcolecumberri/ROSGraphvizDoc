@@ -6,15 +6,18 @@ include_once(dirname(__FILE__)."/Service.php");
 include_once(dirname(__FILE__)."/External.php");
 
 class RGD{
-    static public $nodes = [];
-    static public $topics = [];
-    static public $services = [];
-    static public $external = [];
+    // Public Flags
     static public bool $use_labels = False;
     static public bool $render_leaves = False;
     static public ?int $dpi = Null;
     static public ?string $title = Null;
     static public ?string $title_poss = Null;
+
+    //
+    static public $nodes = [];
+    static public $topics = [];
+    static public $services = [];
+    static public $external = [];
 
     static public function &node(...$params){
         $node = new Node(...$params);
@@ -28,13 +31,15 @@ class RGD{
     }
 
     static public function PNG($out_filename){
-        $dot = self::render();
-        //
+        $dot_data = self::render();
+        $dot_pipe = popen("dot -Tpng -O $out_filename");
+        fwrite($dot_pipe, $dot_data);
+        fclose($dot_pipe);
     }
 
     static public function render(){
         $body = '';
-        $dpi = $GLOBALS["dpi"] ?? 96;
+        $dpi = self::$dpi ?? 96;
         $labels = $this->use_labels ? $this->render_labels() : '';
         $title =
             isset($this->title) ?

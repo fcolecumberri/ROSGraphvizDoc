@@ -7,7 +7,7 @@ def find_between(start, s, end):
         '(((?!' + start + ').(?<!' + end + '))+)' +  # NOQA: W504
         '(' + end + ')'
     )
-    print(f"{regex=}")
+    # print(f"{regex=}")
     finding = re.findall(regex, s)
     if len(finding) == 0:
         return ''
