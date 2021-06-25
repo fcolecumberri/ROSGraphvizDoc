@@ -70,7 +70,7 @@ def generate_doc_from_py(filename, output_dir, package_name):
     safe_mkdir(f"{output_dir}/{package_name}/nodes")
     output_file_content = f'''<?php
 // file: {filename}
-include_once(dirname(__FILE__)."/../../RGDcore/RGD.php");
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
 RGD::node('{package_name}', '{node_name}')
 '''
     for name, pkg, struct in extract_from_calls(file_content, 'rospy\.Publisher', 1):  # NOQA: W605

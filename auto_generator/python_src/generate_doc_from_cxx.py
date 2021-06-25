@@ -33,11 +33,11 @@ def dual_declaration_abstraction(file_content, type_indicator, declaration_funct
                 pkg = pkg.replace('const', '').strip()
             msg = find_between('::', callback_declaration, type_indicator).strip()  # NOQA: W605
             callback_function = find_between(' ', callback_declaration, '\(').strip()  # NOQA: W605
-            print(f"{callback_declaration=}")
-            print(f"{pkg=}")
-            print(f"{msg=}")
-            print(f"{callback_function=}")
-            print(f"{declaration_function=}")
+            # print(f"{callback_declaration=}")
+            # print(f"{pkg=}")
+            # print(f"{msg=}")
+            # print(f"{callback_function=}")
+            # print(f"{declaration_function=}")
             if len(callback_function) > 0:
                 declaration_regex = "\." + declaration_function + "[ <\w>:]*\([^;]*" + callback_function + "[^;]*;"  # NOQA: W605
                 # print(f"{declaration_regex=}")
@@ -78,7 +78,7 @@ def generate_doc_from_cxx(filename, output_dir, package_name):
     # print(f"{filename=}")
     output_file_content = f'''<?php
 // file: {filename}
-include_once(dirname(__FILE__)."/../../RGDcore/RGD.php");
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
 RGD::node('{package_name}', '{node_name}')
 '''
     ##################################################################################################
