@@ -25,3 +25,9 @@ if __name__ == '__main__':
 # s = 'bool imageCallback(jsk_perception::WhiteBalance::Request &req,jsk_perception::WhiteBalance::Response &res'
 # f = find_between('\(', s, '::')  # NOQA: W605
 # print(f"{f}")
+
+# from python_src.generate_doc_from_launch import generate_doc_from_launch
+# generate_doc_from_launch(
+#     '/tmp/ros_RGD/turtlebot3/turtlebot3_bringup/launch/turtlebot3_lidar.launch',
+#     'test', 'test'
+# )

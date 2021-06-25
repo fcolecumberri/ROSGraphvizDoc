@@ -18,7 +18,7 @@ def generate_doc_from_launch(filename, output_dir, package_name):
 // file: {filename}
 include_once(dirname(__FILE__)."/../../RGDcore/RGD.php");
 '''
-    launch_name = os.path.basename(filename)
+    launch_name = os.path.basename(filename).split('.')[0]
     try:
         nodes = file_xpath(filename, '//node')
         for node in nodes:
@@ -29,9 +29,9 @@ include_once(dirname(__FILE__)."/../../RGDcore/RGD.php");
         for include_statement in includes:
             try:
                 file = include_statement.attrib['file']
-                pkg = find_between('find\(', file, '\)')  # NOQA: W605
+                pkg = find_between('find', file, '\)').strip()  # NOQA: W605
                 name = file.split('/')[-1].split('.')[0]
-                output_file_content += f"RGD::include('ros/{pkg}/nodes/{name}.php');\n"
+                output_file_content += f"RGD::include('ros/{pkg}/launch/{name}.php');\n"
             except KeyError:
                 pass
         open(f"{output_dir}/{package_name}/launch/{launch_name}.php", 'w').write(output_file_content)
