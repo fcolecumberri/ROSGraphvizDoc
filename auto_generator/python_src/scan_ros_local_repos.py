@@ -11,5 +11,8 @@ def scan_ros_local_repos():
         # print(ros_package_path)
         package_xml_list = glob.glob(f"{ros_package_path}/**/package.xml", recursive=True)
         for package_xml in package_xml_list:
-            repos += file_xpath(package_xml, "//url[@type='repository']/text()")
+            new_repo = file_xpath(package_xml, "//url[@type='repository']/text()")
+            repos += new_repo
+            if len(new_repo) == 0:
+                print(f"{package_xml} has no repository")
     return repos

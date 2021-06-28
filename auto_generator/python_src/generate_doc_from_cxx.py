@@ -56,7 +56,7 @@ def dual_declaration_abstraction(file_content, type_indicator, declaration_funct
 cxx_checked_files = []
 
 
-def generate_doc_from_cxx(filename, output_dir, package_name):
+def generate_doc_from_cxx(filename, output_dir, package_name, url):
     global cxx_checked_files
     if filename in cxx_checked_files:
         return
@@ -76,10 +76,11 @@ def generate_doc_from_cxx(filename, output_dir, package_name):
         return
     safe_mkdir(f"{output_dir}/{package_name}/nodes")
     # print(f"{filename=}")
+    # print(f"{url=}")
     output_file_content = f'''<?php
 // file: {filename}
 include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
-RGD::node('{package_name}', '{node_name}')
+RGD::node('{package_name}', '{node_name}', '{url}', ProgresState::ros_official)
 '''
     ##################################################################################################
     for topic_pkg, topic_msg, topic_name in single_declaration_abstraction(

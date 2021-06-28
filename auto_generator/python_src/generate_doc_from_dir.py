@@ -5,15 +5,15 @@ from .generate_doc_from_py import generate_doc_from_py
 from .generate_doc_from_launch import generate_doc_from_launch
 
 
-def generate_doc_from_dir(package_name, output_dir, pkg_dir):
+def generate_doc_from_dir(package_name, output_dir, pkg_dir, url):
     safe_mkdir(f"{output_dir}/{package_name}")
     # print(f"{package_name=}")
     cxx_files = files_with_regex(pkg_dir, "ros::init\([^;]*;")  # NOQA: W605
     for cxx_filename in cxx_files:
-        generate_doc_from_cxx(cxx_filename, output_dir, package_name)
+        generate_doc_from_cxx(cxx_filename, output_dir, package_name, url)
     py_files = files_with_regex(pkg_dir, "rospy.init_node")
     for py_filename in py_files:
-        generate_doc_from_py(py_filename, output_dir, package_name)
+        generate_doc_from_py(py_filename, output_dir, package_name, url)
     # print(f"{pkg_dir=}")
     # print(f"{cxx_files=}")
     launch_files = files_with_regex(pkg_dir, "<launch>")

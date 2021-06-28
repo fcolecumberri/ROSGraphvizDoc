@@ -52,7 +52,7 @@ def extract_from_calls(file_content, call, struct_pos):
 py_checked_files = []
 
 
-def generate_doc_from_py(filename, output_dir, package_name):
+def generate_doc_from_py(filename, output_dir, package_name, url):
     global py_checked_files
     if filename in py_checked_files:
         return
@@ -71,7 +71,7 @@ def generate_doc_from_py(filename, output_dir, package_name):
     output_file_content = f'''<?php
 // file: {filename}
 include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
-RGD::node('{package_name}', '{node_name}')
+RGD::node('{package_name}', '{node_name}', '{url}', ProgresState::ros_official)
 '''
     for name, pkg, struct in extract_from_calls(file_content, 'rospy\.Publisher', 1):  # NOQA: W605
         output_file_content += f"\t->publish_topic('{name}', '{pkg}', '{struct}')\n"
@@ -86,4 +86,5 @@ RGD::node('{package_name}', '{node_name}')
     for name, pkg, struct in extract_from_calls(file_content, 'actionlib\.SimpleActionServer', 1):  # NOQA: W605
         output_file_content += f"\t->advertise_action('{name}', '{pkg}', '{struct}')\n"
     # print(f"{node_name=}")
+    output_file_content += ';'
     open(f"{output_dir}/{package_name}/nodes/{node_name}.php", 'w').write(output_file_content)
