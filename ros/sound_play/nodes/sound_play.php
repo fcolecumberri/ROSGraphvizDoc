@@ -5,4 +5,5 @@ RGD::node('sound_play', 'sound_play', 'https://github.com/ros-drivers/audio_comm
 	->publish_topic('/diagnostics', 'diagnostic_msgs', 'DiagnosticArray')
 	->subscribe_topic('robotsound', 'sound_play', 'SoundRequest')
 	->advertise_action('sound_play', 'sound_play', 'SoundRequestAction')
+    ->send_to_external('Speaker')
 ;
