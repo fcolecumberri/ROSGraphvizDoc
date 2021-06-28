@@ -5,6 +5,7 @@ include_once(dirname(__FILE__)."/MultiLayerRenderable.php");
 
 class Topic extends MultiLayerRenderable{
     use InfoChannel;
+    const fillcolor = 'maroon3';
     public function __construct(
         public string $name,
         public string $pkg,
@@ -18,12 +19,12 @@ class Topic extends MultiLayerRenderable{
                 'shape' => 'record',
                 'style' => 'filled',
                 'color' => 'black',
-                'fillcolor' => 'magenta',
+                'fillcolor' => self::fillcolor,
             ]
         );
     }
 
-    public function is_same($name, $pkg, $struct, $renamed_from){
+    public function is_same($name, $pkg, $struct, $renamed_from = ''){
         return
             ($this->name == $name) and
             ($this->struct == $struct) and

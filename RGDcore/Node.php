@@ -47,19 +47,20 @@ class Node extends Renderable{
         foreach ($this->connections as $conection_name => &$conection_value) {
             if(!$conection_value['node']->is_leaf() or RGD::$render_leaves) {
                 $r .= $conection_value['node']->render();
-                if($conection_value['type'] == 'advertise_service') {
+                if($conection_value['type'] == 'consume_service') {
                     $r .= $conection_value['node']->var_name." -> ".$this->var_name;
                     $r .= ' ['.$this->render_options([
                         'label' => $conection_value['node']->connection_label(),
                         "dir"=>"both",
                     ]).']';
-                } elseif($conection_value['type'] == 'consume_service') {
+                } elseif($conection_value['type'] == 'advertise_service') {
                     $r .= $conection_value['node']->var_name." -> ".$this->var_name;
                     $r .= ' ['.$this->render_options([
                         'label' => $conection_value['node']->connection_label(),
                         "dir"=>"none",
                         "style"=>"dotted",
-                    ]);']';
+                        ])
+                        .']';
                 } elseif($conection_value['type'] == 'publish_topic') {
                     $r .= $this->var_name." -> ".$conection_value['node']->var_name;
                     $this->render_options([
@@ -91,7 +92,7 @@ class Node extends Renderable{
 
     private function connect(Service|Topic|External|NULL &$conection, $type){
         if($conection == NULL) return $this;
-        $this->connections[$conection->name] = [
+        $this->connections[$conection->name.'_'.$type] = [
             'type' => $type,
             'node' => $conection,
         ];

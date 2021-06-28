@@ -9,15 +9,15 @@ class RGD{
     // Public Flags
     static public bool $use_labels = False;
     static public bool $render_leaves = False;
-    static public ?int $dpi = Null;
+    static public int $dpi = 96;
     static public ?string $title = Null;
-    static public ?string $title_poss = Null;
+    static public string $title_pos = 't';
 
     //
-    static public $nodes = [];
-    static public $topics = [];
-    static public $services = [];
-    static public $external = [];
+    static private $nodes = [];
+    static private $topics = [];
+    static private $services = [];
+    static private $external = [];
 
     static public function &node(...$params){
         $node = new Node(...$params);
@@ -30,24 +30,39 @@ class RGD{
         return self::$nodes[$name];
     }
 
+    static public function &get_node($name){
+        return self::$nodes[$name];
+    }
+
     static public function PNG($out_filename){
         $dot_data = self::render();
-        $dot_pipe = popen("dot -Tpng -O $out_filename");
-        fwrite($dot_pipe, $dot_data);
-        fclose($dot_pipe);
+        $dot = proc_open(
+            "dot -Tpng",
+            [
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+            ],
+            $pipes
+        );
+        fwrite($pipes[0], $dot_data);
+        fclose($pipes[0]);
+        $dot_output = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+        proc_close($dot);
+        file_put_contents($out_filename, $dot_output);
     }
 
     static public function render(){
         $body = '';
-        $dpi = self::$dpi ?? 96;
-        $labels = $this->use_labels ? $this->render_labels() : '';
+        $dpi = self::$dpi;
+        $labels = self::$use_labels ? self::render_labels() : '';
         $title =
-            isset($this->title) ?
+            !is_null(self::$title) ?
             (
                 "label=\"".
-                $this->title.
+                self::$title.
                 "\" labelloc=\"".
-                ($this->title_pos ?? 't').
+                (self::$title_pos ?? 't').
                 "\"\n"
             ) :
             '';
@@ -94,7 +109,7 @@ FILE;
     }
 
     static public function &service(...$params) {
-        return self::channel(self::$topics, Service::class, ...$params);
+        return self::channel(self::$services, Service::class, ...$params);
     }
 
     static public function &external(...$params) {
@@ -112,30 +127,41 @@ FILE;
     }
 
     static public function render_labels(){
+        $color_labels = '';
+        $color_nodes = [];
+        $label_connections = '';
+        foreach (ProgresState::all_states as $state) {
+            $name = "cluster_label_of_colors_".str_replace(' ', '_', state_to_label($state));
+            $color_labels .=
+                "$name ".
+                "[style=\"filled\",shape=\"ellipse\",color=\"black\",".
+                "fillcolor=\"".state_to_color($state)."\",".
+                "label=\"".state_to_label($state)."\"];\n";
+            array_push($color_nodes, $name);
+        }
+        for ($node_i=1; $node_i < count($color_nodes); $node_i++) {
+            $label_connections.=
+                $color_nodes[$node_i-1].' -> '.$color_nodes[$node_i].
+                " [style=\"invis\"];\n";
+        }
+        $last_color_node = $color_nodes[count($color_nodes)-1];
+        $service_color = Service::fillcolor;
+        $topic_color = Topic::fillcolor;
         return <<<FILE
 subgraph cluster_labels_of_system
 {
     subgraph cluster_label_of_colors
     {
-        cluster_label_of_colors_to_do [style="filled",shape="ellipse",color="black",fillcolor="white",label="To do"];
-        cluster_label_of_colors_doing [style="filled",shape="ellipse",color="black",fillcolor="yellow",label="Doing"];
-        cluster_label_of_colors_testing [style="filled",shape="ellipse",color="black",fillcolor="cyan",label="Testing"];
-        cluster_label_of_colors_done [style="filled",shape="ellipse",color="black",fillcolor="green",label="Done"];
-        cluster_label_of_colors_known_bugs [style="filled",shape="ellipse",color="black",fillcolor="red",label="Known bugs"];
-        cluster_label_of_colors_not_used [style="filled",shape="ellipse",color="black",fillcolor="gray60",label="Not used"];
+$color_labels
     }
     subgraph cluster_label_of_elements
     {
         cluster_label_of_elements_node [style="filled",shape="ellipse",color="black",fillcolor="white",label="Node"];
-        cluster_label_of_elements_service [shape="Mrecord",style="filled",color="black",fillcolor="white",label="{Service | Service's srv}"];
-        cluster_label_of_elements_topic [shape="record",style="filled",color="black",fillcolor="white",label="{Topic | Topic's msg}"];
+        cluster_label_of_elements_service [shape="Mrecord",style="filled",color="black",fillcolor="$service_color",label="{Service | Service's srv}"];
+        cluster_label_of_elements_topic [shape="record",style="filled",color="black",fillcolor="$topic_color",label="{Topic | Topic's msg}"];
         cluster_label_of_elements_extern [shape="polygon",sides="5",style="filled",color="black",fillcolor="magenta",label="External element"];
-        cluster_label_of_colors_to_do ->cluster_label_of_colors_doing [style="invis"];
-        cluster_label_of_colors_doing ->cluster_label_of_colors_testing [style="invis"];
-        cluster_label_of_colors_testing ->cluster_label_of_colors_done [style="invis"];
-        cluster_label_of_colors_done ->cluster_label_of_colors_known_bugs [style="invis"];
-        cluster_label_of_colors_known_bugs ->cluster_label_of_colors_not_used [style="invis"];
-        cluster_label_of_colors_not_used ->cluster_label_of_elements_node [style="invis"];
+$label_connections
+        $last_color_node ->cluster_label_of_elements_node [style="invis"];
         cluster_label_of_elements_node ->cluster_label_of_elements_service [style="invis"];
         cluster_label_of_elements_service ->cluster_label_of_elements_topic [style="invis"];
         cluster_label_of_elements_topic -> cluster_label_of_elements_extern [style="invis"];
