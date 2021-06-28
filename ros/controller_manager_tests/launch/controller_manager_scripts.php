@@ -1,0 +1,4 @@
+<?php
+// file: /tmp/ros_RGD/ros_control/controller_manager_tests/test/controller_manager_scripts.test
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/controller_manager_tests/nodes/dummy_app.php');

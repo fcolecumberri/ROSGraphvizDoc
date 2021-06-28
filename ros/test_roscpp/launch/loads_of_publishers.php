@@ -1,0 +1,23 @@
+<?php
+// file: /tmp/ros_RGD/ros_comm/test/test_roscpp/test/launch/loads_of_publishers.xml
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/test_roscpp/nodes/publish_constantly1.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly2.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly3.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly4.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly5.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly6.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly7.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly8.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly9.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly10.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly11.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly12.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly13.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly14.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly15.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly16.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly17.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly18.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly19.php');
+RGD::import('ros/test_roscpp/nodes/publish_constantly20.php');

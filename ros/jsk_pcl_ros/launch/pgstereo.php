@@ -1,0 +1,21 @@
+<?php
+// file: /tmp/ros_RGD/jsk_recognition/jsk_pcl_ros/launch/pgstereo.launch
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/nodelet/nodes/manager.php');
+RGD::import('ros/nodelet/nodes/driver.php');
+RGD::import('ros/image_view/nodes/image_view.php');
+RGD::import('ros/image_view/nodes/image_view_rect.php');
+RGD::import('ros/nodelet/nodes/driver.php');
+RGD::import('ros/image_view/nodes/image_view.php');
+RGD::import('ros/image_view/nodes/image_view_rect.php');
+RGD::import('ros/stereo_image_proc/nodes/stereo_image_proc.php');
+RGD::import('ros/image_view/nodes/disparity_view.php');
+RGD::import('ros/rqt_reconfigure/nodes/rqt_reconfigure.php');
+RGD::import('ros/nodelet/nodes/image_resizer.php');
+RGD::import('ros/nodelet/nodes/image_resizer.php');
+RGD::import('ros/stereo_image_proc/nodes/stereo_image_proc_2.php');
+RGD::import('ros/image_view/nodes/disparity_view2.php');
+RGD::import('ros/nodelet/nodes/image_resizer.php');
+RGD::import('ros/nodelet/nodes/image_resizer.php');
+RGD::import('ros/stereo_image_proc/nodes/stereo_image_proc_4.php');
+RGD::import('ros/image_view/nodes/disparity_view4.php');

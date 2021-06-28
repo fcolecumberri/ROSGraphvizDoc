@@ -1,0 +1,22 @@
+<?php
+// file: /tmp/ros_RGD/jsk_recognition/jsk_perception/launch/basic_2d_features.launch
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/jsk_topic_tools/nodes/input_relay.php');
+RGD::import('ros/jsk_perception/nodes/hsv.php');
+RGD::import('ros/jsk_perception/nodes/lab.php');
+RGD::import('ros/jsk_perception/nodes/ycc.php');
+RGD::import('ros/jsk_perception/nodes/kmeans5.php');
+RGD::import('ros/jsk_perception/nodes/kmeans10.php');
+RGD::import('ros/jsk_perception/nodes/kmeans50.php');
+RGD::import('ros/jsk_perception/nodes/edge0.php');
+RGD::import('ros/jsk_perception/nodes/edge1.php');
+RGD::import('ros/jsk_perception/nodes/edge2.php');
+RGD::import('ros/jsk_perception/nodes/gaussian_blur.php');
+RGD::import('ros/imagesift/nodes/sift.php');
+RGD::import('ros/posedetection_msgs/nodes/sift_image.php');
+RGD::import('ros/imagesift/nodes/surf.php');
+RGD::import('ros/posedetection_msgs/nodes/surf_image.php');
+RGD::import('ros/imagesift/nodes/brisk.php');
+RGD::import('ros/posedetection_msgs/nodes/brisk_image.php');
+RGD::import('ros/jsk_perception/nodes/tile_image.php');
+RGD::import('ros/image_view/nodes/result_view.php');

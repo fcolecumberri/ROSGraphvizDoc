@@ -1,0 +1,26 @@
+<?php
+// file: /tmp/ros_RGD/jsk_recognition/jsk_pcl_ros/launch/valve_detection.launch
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/jsk_pcl_ros/nodes/odom_laser.php');
+RGD::import('ros/jsk_pcl_ros/nodes/normal_estimation.php');
+RGD::import('ros/jsk_pcl_ros/nodes/normal_direction_filter.php');
+RGD::import('ros/nodelet/nodes/normal_direction_filter_points.php');
+RGD::import('ros/jsk_pcl_ros/nodes/normal_direction_filter_points_camera.php');
+RGD::import('ros/jsk_pcl_ros/nodes/region_growing_multiple_plane_segmentation.php');
+RGD::import('ros/jsk_pcl_ros/nodes/region_growing_result_decomposer.php');
+RGD::import('ros/jsk_pcl_ros/nodes/plane_concatenator.php');
+RGD::import('ros/jsk_pcl_ros/nodes/plane_concatenator_transformed.php');
+RGD::import('ros/jsk_pcl_ros/nodes/cluster_point_indices_decomposer.php');
+RGD::import('ros/jsk_perception/nodes/hsv_decomposer.php');
+RGD::import('ros/jsk_perception/nodes/polygon_array_color_histogram.php');
+RGD::import('ros/jsk_perception/nodes/polygon_array_color_likelihood.php');
+RGD::import('ros/jsk_pcl_ros/nodes/extract_top_polygon_likelihood.php');
+RGD::import('ros/image_view/nodes/polygon_array_color_histogram_debug_view.php');
+RGD::import('ros/jsk_pcl_ros/nodes/multi_plane_extraction.php');
+RGD::import('ros/jsk_pcl_ros/nodes/euclidean_clustering.php');
+RGD::import('ros/jsk_pcl_ros/nodes/euclidean_clustering_decomposer.php');
+RGD::import('ros/jsk_pcl_ros/nodes/torus_finder.php');
+RGD::import('ros/jsk_interactive_marker/nodes/polygon_marker.php');
+RGD::import('ros/jsk_perception/nodes/selected_polygon_color_histogram.php');
+RGD::import('ros/jsk_perception/nodes/unwral_selected_polygon_color_histogram.php');
+RGD::import('ros/rostopic/nodes/selected_polygon_color_histogram.php');

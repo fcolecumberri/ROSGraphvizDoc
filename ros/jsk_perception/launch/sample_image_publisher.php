@@ -1,0 +1,19 @@
+<?php
+// file: /tmp/ros_RGD/jsk_recognition/jsk_perception/sample/sample_image_publisher.launch
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/jsk_perception/nodes/raw_image_bgr.php');
+RGD::import('ros/jsk_perception/nodes/raw_image_rgb.php');
+RGD::import('ros/jsk_perception/nodes/raw_image_bgra.php');
+RGD::import('ros/jsk_perception/nodes/raw_image_rgba.php');
+RGD::import('ros/jsk_perception/nodes/mask_image.php');
+RGD::import('ros/jsk_perception/nodes/depth_image_16uc1.php');
+RGD::import('ros/jsk_perception/nodes/depth_image_32fc1.php');
+RGD::import('ros/jsk_perception/nodes/label_image.php');
+RGD::import('ros/image_view/nodes/image_view0.php');
+RGD::import('ros/image_view/nodes/image_view1.php');
+RGD::import('ros/image_view/nodes/image_view2.php');
+RGD::import('ros/image_view/nodes/image_view3.php');
+RGD::import('ros/image_view/nodes/image_view4.php');
+RGD::import('ros/image_view/nodes/image_view5.php');
+RGD::import('ros/image_view/nodes/image_view6.php');
+RGD::import('ros/image_view/nodes/image_view7.php');

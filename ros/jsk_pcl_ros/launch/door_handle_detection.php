@@ -1,0 +1,24 @@
+<?php
+// file: /tmp/ros_RGD/jsk_recognition/jsk_pcl_ros/launch/door_handle_detection.launch
+include_once(dirname(__FILE__)."/../../../RGDcore/RGD.php");
+RGD::import('ros/jsk_pcl_ros/nodes/odom_stereo.php');
+RGD::import('ros/jsk_pcl_ros/nodes/laser_downsample.php');
+RGD::import('ros/jsk_pcl_ros/nodes/odom_laser.php');
+RGD::import('ros/jsk_pcl_ros/nodes/normal_estimation.php');
+RGD::import('ros/jsk_pcl_ros/nodes/normal_direction_filter.php');
+RGD::import('ros/nodelet/nodes/normal_direction_filter_points.php');
+RGD::import('ros/jsk_pcl_ros/nodes/region_growing_multiple_plane_segmentation.php');
+RGD::import('ros/jsk_pcl_ros/nodes/multi_plane_extraction.php');
+RGD::import('ros/jsk_pcl_ros/nodes/organized_multi_plane_segmentation.php');
+RGD::import('ros/jsk_pcl_ros/nodes/organized_multi_plane_decomposer.php');
+RGD::import('ros/jsk_pcl_ros/nodes/non_plane_stereo_points.php');
+RGD::import('ros/jsk_perception/nodes/hsv_decomposer.php');
+RGD::import('ros/jsk_pcl_ros/nodes/plane_camera_transformed.php');
+RGD::import('ros/jsk_perception/nodes/polygon_array_color_histogram.php');
+RGD::import('ros/jsk_perception/nodes/polygon_array_angle_likelihood.php');
+RGD::import('ros/nodelet/nodes/voxel_downsample.php');
+RGD::import('ros/nodelet/nodes/stereo_voxel_downsample.php');
+RGD::import('ros/jsk_pcl_ros/nodes/plane_supported_cuboid_estimator.php');
+RGD::import('ros/jsk_pcl_ros/nodes/top_n_particles.php');
+RGD::import('ros/jsk_pcl_ros/nodes/interactive_cuboid_likelihood.php');
+RGD::import('ros/jsk_pcl_ros/nodes/cluster_point_indices_decomposer.php');
